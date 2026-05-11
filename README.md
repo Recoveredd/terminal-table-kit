@@ -8,6 +8,14 @@ Parse terminal table output into JavaScript objects.
 
 It is inspired by old table parsers such as `table-parser`, but rebuilt as a modern, typed, dependency-free package.
 
+## Package quality
+
+- TypeScript types are generated from the source.
+- ESM-only package with no runtime dependencies.
+- Marked as side-effect free for bundlers.
+- Tested on Node.js 20 and 22 with GitHub Actions.
+- Parses terminal output without shelling out or reading files.
+
 ## Install
 
 ```bash

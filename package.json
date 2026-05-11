@@ -3,6 +3,7 @@
   "version": "0.1.1",
   "description": "Parse fixed-width terminal table output into typed rows.",
   "type": "module",
+  "sideEffects": false,
   "license": "MIT",
   "author": "Recoveredd",
   "repository": {
@@ -37,6 +38,9 @@
   ],
   "publishConfig": {
     "access": "public"
+  },
+  "engines": {
+    "node": ">=20"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
