@@ -1,5 +1,7 @@
 # terminal-table-kit
 
+[![CI](https://github.com/Recoveredd/terminal-table-kit/actions/workflows/ci.yml/badge.svg)](https://github.com/Recoveredd/terminal-table-kit/actions/workflows/ci.yml)
+
 Parse terminal table output into JavaScript objects.
 
 `terminal-table-kit` is a small TypeScript utility for tools that need to turn command output into data: CLI wrappers, dashboards, diagnostics, scripts, docs generators and lightweight admin tooling.
