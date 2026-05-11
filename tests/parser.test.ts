@@ -133,6 +133,18 @@ describe('terminal-table-kit', () => {
     })[0]?.command).toBe('node server.js');
   });
 
+  it('lets columnKeys take priority over the headers alias', () => {
+    const input = [
+      'PID TTY           TIME CMD',
+      '1   ttys000    0:00.01 node server.js'
+    ].join('\n');
+
+    expect(parseTerminalTable(input, {
+      columnKeys: ['pid', 'tty', 'time', 'command'],
+      headers: ['processId']
+    })[0]?.pid).toBe('1');
+  });
+
   it('strips ANSI escape sequences by default', () => {
     const input = [
       'NAME      STATUS',
@@ -181,6 +193,22 @@ describe('terminal-table-kit', () => {
 
   it('throws a clear error for non-string input', () => {
     expect(() => parseTerminalTable(['NAME'] as unknown as string)).toThrow('terminal-table-kit expects a string input.');
+  });
+
+  it('normalizes invalid runtime options from JavaScript callers', () => {
+    const input = [
+      'NAME      STATUS',
+      'api       Running'
+    ].join('\n');
+
+    const model = parseTerminalTableModel(input, {
+      headerLine: Number.NaN,
+      keyStyle: 'loud' as never,
+      mode: 'guess' as never
+    });
+
+    expect(model.mode).toBe('fixed');
+    expect(model.rows).toEqual([{ NAME: 'api', STATUS: 'Running' }]);
   });
 
   it('returns empty output for empty input', () => {

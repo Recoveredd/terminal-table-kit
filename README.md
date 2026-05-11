@@ -181,6 +181,16 @@ interface ParseTerminalTableOptions {
 | `stripAnsi` | `true` | Remove ANSI colors before parsing. |
 | `trimCells` | `true` | Trim parsed cell values. |
 
+If both `columnKeys` and `headers` are provided, `columnKeys` wins.
+
+## Types
+
+```ts
+type ColumnKeyStyle = 'preserve' | 'camel' | 'snake';
+type ParseMode = 'auto' | 'fixed' | 'tokens';
+type TerminalTableRow = Record<string, string>;
+```
+
 ## Notes
 
 - This library is for aligned terminal tables, not CSV.

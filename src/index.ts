@@ -11,6 +11,7 @@ export {
 export type {
   ColumnKeyStyle,
   ParseTerminalTableOptions,
+  ParseMode,
   TerminalTableCellValue,
   TerminalTableColumn,
   TerminalTableModel,

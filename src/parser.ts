@@ -96,15 +96,39 @@ export function createColumnKey(header: string, keyStyle: ColumnKeyStyle = 'pres
 function resolveOptions(options: ParseTerminalTableOptions): ResolvedOptions {
   return {
     columnKeys: options.columnKeys ?? options.headers,
-    headerLine: options.headerLine ?? 0,
-    keyStyle: options.keyStyle ?? 'preserve',
-    mode: options.mode ?? 'auto',
+    headerLine: normalizeHeaderLine(options.headerLine),
+    keyStyle: normalizeKeyStyle(options.keyStyle),
+    mode: normalizeMode(options.mode),
     preserveLastColumn: options.preserveLastColumn ?? true,
     separator: options.separator ?? DEFAULT_SEPARATOR,
     skipEmptyLines: options.skipEmptyLines ?? true,
     stripAnsi: options.stripAnsi ?? true,
     trimCells: options.trimCells ?? true
   };
+}
+
+function normalizeHeaderLine(value: number | undefined): number {
+  if (value === undefined || !Number.isFinite(value)) {
+    return 0;
+  }
+
+  return Math.floor(value);
+}
+
+function normalizeKeyStyle(value: unknown): ColumnKeyStyle {
+  if (value === 'camel' || value === 'snake') {
+    return value;
+  }
+
+  return 'preserve';
+}
+
+function normalizeMode(value: unknown): ParseMode {
+  if (value === 'fixed' || value === 'tokens') {
+    return value;
+  }
+
+  return 'auto';
 }
 
 function normalizeInput(input: string, options: ResolvedOptions): string[] {
