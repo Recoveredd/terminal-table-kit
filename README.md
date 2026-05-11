@@ -1,6 +1,6 @@
 # terminal-table-kit
 
-Parse fixed-width terminal table output into JavaScript objects.
+Parse terminal table output into JavaScript objects.
 
 `terminal-table-kit` is a small TypeScript utility for tools that need to turn command output into data: CLI wrappers, dashboards, diagnostics, scripts, docs generators and lightweight admin tooling.
 
@@ -41,9 +41,16 @@ Many useful commands print tables instead of JSON:
 - `lsof`
 - legacy CLIs and internal tools
 
-Those tables are usually aligned by spaces. `terminal-table-kit` detects the header columns, slices each row using the same column starts and returns plain objects.
+Those tables are usually aligned by spaces. `terminal-table-kit` detects the header columns and returns plain objects.
 
 It also preserves the final column as free text by default, which is useful for command columns such as `CMD`, `COMMAND`, `NAMES` or human-readable ages.
+
+Two parsing modes are supported:
+
+- `fixed`: slice rows by detected header column positions, useful for aligned output such as `docker ps`.
+- `tokens`: split rows on whitespace, useful for compact headers such as `PID TTY TIME CMD`.
+
+The default `auto` mode chooses between them from the header shape.
 
 ## Examples
 
@@ -72,8 +79,8 @@ parseTerminalTable(output);
 
 ```ts
 const output = [
-  'CONTAINER ID   IMAGE       COMMAND                  CREATED       STATUS       NAMES',
-  'a1b2c3d4e5f6   redis:7     "docker-entrypoint.s"   2 hours ago   Up 2 hours   cache'
+  'CONTAINER ID   IMAGE          COMMAND                  CREATED       STATUS       NAMES',
+  'a1b2c3d4e5f6   redis:7        "docker-entrypoint.s"   2 hours ago   Up 2 hours   cache'
 ].join('\n');
 
 parseTerminalTable(output, { keyStyle: 'camel' });
@@ -95,6 +102,13 @@ parseTerminalTable(output, { keyStyle: 'camel' });
 parseTerminalTable(output, {
   headers: ['pid', 'tty', 'time', 'command']
 });
+```
+
+### Force a parsing mode
+
+```ts
+parseTerminalTable(output, { mode: 'tokens' });
+parseTerminalTable(output, { mode: 'fixed' });
 ```
 
 ### Inspect detected columns
@@ -195,7 +209,8 @@ type TerminalTableRow = Record<string, string>;
 
 - This library is for aligned terminal tables, not CSV.
 - It does not execute commands; it only parses strings.
-- Detection works best when the first non-empty line is the header.
+- Detection works best when the selected header line visually matches the following rows.
+- `fixed` mode expects column-aligned rows. If the output is only whitespace-separated, force `mode: 'tokens'`.
 - For commands that can output JSON natively, prefer the command's JSON mode.
 
 ## License
