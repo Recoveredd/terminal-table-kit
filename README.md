@@ -111,6 +111,23 @@ parseTerminalTable(output, { mode: 'tokens' });
 parseTerminalTable(output, { mode: 'fixed' });
 ```
 
+### Convert parsed rows to Markdown
+
+`terminal-table-kit` only parses strings. Pair it with `array-table-kit` when you want Markdown or HTML table output.
+
+```ts
+import { arrayToMarkdownTable } from 'array-table-kit';
+import { parseTerminalTable } from 'terminal-table-kit';
+
+const rows = parseTerminalTable(output, {
+  keyStyle: 'camel'
+});
+
+const markdown = arrayToMarkdownTable(rows);
+```
+
+For browser previews or support dashboards, render parsed rows with `json-html-kit`.
+
 ### Inspect detected columns
 
 ```ts
