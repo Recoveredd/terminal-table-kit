@@ -93,7 +93,7 @@ parseTerminalTable(output, { keyStyle: 'camel' });
 
 ```ts
 parseTerminalTable(output, {
-  columnKeys: ['pid', 'tty', 'time', 'command']
+  headers: ['pid', 'tty', 'time', 'command']
 });
 ```
 
@@ -110,6 +110,9 @@ model.columns;
 //   { header: 'TTY', key: 'TTY', start: 6, end: 20 },
 //   ...
 // ]
+
+model.mode;
+// fixed
 ```
 
 ## API
@@ -153,8 +156,10 @@ stripAnsi('\u001B[32mRunning\u001B[0m');
 ```ts
 interface ParseTerminalTableOptions {
   columnKeys?: readonly string[] | ((header: string, index: number) => string);
+  headers?: readonly string[] | ((header: string, index: number) => string);
   headerLine?: number;
   keyStyle?: 'preserve' | 'camel' | 'snake';
+  mode?: 'auto' | 'fixed' | 'tokens';
   preserveLastColumn?: boolean;
   separator?: RegExp;
   skipEmptyLines?: boolean;
@@ -166,8 +171,10 @@ interface ParseTerminalTableOptions {
 | Option | Default | Description |
 | --- | --- | --- |
 | `columnKeys` | detected headers | Explicit row keys, or a function that maps headers to keys. |
+| `headers` | detected headers | Friendly alias for `columnKeys`. |
 | `headerLine` | `0` | Index of the header line after optional empty-line filtering. |
 | `keyStyle` | `preserve` | Keep headers as keys, or convert to `camel` / `snake`. |
+| `mode` | `auto` | Let the parser choose, or force `fixed` / `tokens`. |
 | `preserveLastColumn` | `true` | Let the final column consume the rest of the row. |
 | `separator` | `/[ \t]{2,}/g` | Separator used to detect multi-word headers. Falls back to whitespace tokens. |
 | `skipEmptyLines` | `true` | Remove empty lines before parsing. |

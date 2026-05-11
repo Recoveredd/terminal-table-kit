@@ -1,6 +1,7 @@
 import { TableParseError } from './errors.js';
 import type {
   ColumnKeyStyle,
+  ParseMode,
   ParseTerminalTableOptions,
   TerminalTableColumn,
   TerminalTableModel,
@@ -14,6 +15,7 @@ interface ResolvedOptions {
   columnKeys: readonly string[] | ((header: string, index: number) => string) | undefined;
   headerLine: number;
   keyStyle: ColumnKeyStyle;
+  mode: ParseMode;
   preserveLastColumn: boolean;
   separator: RegExp;
   skipEmptyLines: boolean;
@@ -21,12 +23,12 @@ interface ResolvedOptions {
   trimCells: boolean;
 }
 
-type ParseMode = 'fixed' | 'tokens';
+type DetectedParseMode = Exclude<ParseMode, 'auto'>;
 type DetectedColumn = Omit<TerminalTableColumn, 'key'>;
 
 interface ColumnDetection {
   columns: DetectedColumn[];
-  mode: ParseMode;
+  mode: DetectedParseMode;
 }
 
 export function parseTerminalTable(input: string, options: ParseTerminalTableOptions = {}): TerminalTableRow[] {
@@ -42,7 +44,7 @@ export function parseTerminalTableModel(input: string, options: ParseTerminalTab
   const lines = normalizeInput(input, settings);
 
   if (lines.length === 0) {
-    return { columns: [], rows: [] };
+    return { columns: [], mode: settings.mode === 'fixed' ? 'fixed' : 'tokens', rows: [] };
   }
 
   if (settings.headerLine < 0 || settings.headerLine >= lines.length) {
@@ -57,7 +59,7 @@ export function parseTerminalTableModel(input: string, options: ParseTerminalTab
     .map((line) => parseRow(line, columns, detection.mode, settings))
     .filter((row) => Object.values(row).some((value) => value !== ''));
 
-  return { columns, rows };
+  return { columns, mode: detection.mode, rows };
 }
 
 export function stripAnsi(input: string): string {
@@ -93,9 +95,10 @@ export function createColumnKey(header: string, keyStyle: ColumnKeyStyle = 'pres
 
 function resolveOptions(options: ParseTerminalTableOptions): ResolvedOptions {
   return {
-    columnKeys: options.columnKeys,
+    columnKeys: options.columnKeys ?? options.headers,
     headerLine: options.headerLine ?? 0,
     keyStyle: options.keyStyle ?? 'preserve',
+    mode: options.mode ?? 'auto',
     preserveLastColumn: options.preserveLastColumn ?? true,
     separator: options.separator ?? DEFAULT_SEPARATOR,
     skipEmptyLines: options.skipEmptyLines ?? true,
@@ -114,7 +117,7 @@ function normalizeInput(input: string, options: ResolvedOptions): string[] {
   return options.skipEmptyLines ? lines.filter((line) => line.trim() !== '') : lines;
 }
 
-function resolveColumns(header: string, options: ResolvedOptions): { columns: TerminalTableColumn[]; mode: ParseMode } {
+function resolveColumns(header: string, options: ResolvedOptions): { columns: TerminalTableColumn[]; mode: DetectedParseMode } {
   const detection = detectColumns(header, options);
 
   if (detection.columns.length === 0) {
@@ -133,6 +136,14 @@ function resolveColumns(header: string, options: ResolvedOptions): { columns: Te
 function detectColumns(header: string, options: ResolvedOptions): ColumnDetection {
   const separated = detectColumnsBySeparator(header, options.separator);
   const whitespace = detectColumnsByWhitespace(header);
+
+  if (options.mode === 'fixed') {
+    return { columns: separated, mode: 'fixed' };
+  }
+
+  if (options.mode === 'tokens') {
+    return { columns: whitespace, mode: 'tokens' };
+  }
 
   if (Array.isArray(options.columnKeys) && options.columnKeys.length > separated.length) {
     return { columns: whitespace, mode: 'tokens' };
@@ -227,7 +238,7 @@ function resolveColumnKey(header: string, index: number, options: ResolvedOption
 function parseRow(
   line: string,
   columns: readonly TerminalTableColumn[],
-  mode: ParseMode,
+  mode: DetectedParseMode,
   options: ResolvedOptions
 ): TerminalTableRow {
   if (mode === 'tokens') {

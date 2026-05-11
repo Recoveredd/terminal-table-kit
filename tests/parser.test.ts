@@ -86,8 +86,21 @@ describe('terminal-table-kit', () => {
       { header: 'READY', key: 'ready', start: 10, end: 18 },
       { header: 'STATUS', key: 'status', start: 18 }
     ]);
+    expect(model.mode).toBe('fixed');
     expect(model.rows).toEqual([
       { name: 'api', ready: '1/1', status: 'Running' }
+    ]);
+  });
+
+  it('can force token parsing when automatic detection would choose fixed columns', () => {
+    const input = [
+      'NAME      STATUS',
+      'api       Running'
+    ].join('\n');
+
+    expect(parseTerminalTableModel(input, { mode: 'tokens' }).mode).toBe('tokens');
+    expect(parseTerminalTable(input, { mode: 'tokens' })).toEqual([
+      { NAME: 'api', STATUS: 'Running' }
     ]);
   });
 
@@ -107,6 +120,17 @@ describe('terminal-table-kit', () => {
         command: 'node server.js'
       }
     ]);
+  });
+
+  it('supports headers as a user-friendly alias for column keys', () => {
+    const input = [
+      'PID TTY           TIME CMD',
+      '1   ttys000    0:00.01 node server.js'
+    ].join('\n');
+
+    expect(parseTerminalTable(input, {
+      headers: ['pid', 'tty', 'time', 'command']
+    })[0]?.command).toBe('node server.js');
   });
 
   it('strips ANSI escape sequences by default', () => {
@@ -161,7 +185,8 @@ describe('terminal-table-kit', () => {
 
   it('returns empty output for empty input', () => {
     expect(parseTerminalTable('')).toEqual([]);
-    expect(parseTerminalTableModel('')).toEqual({ columns: [], rows: [] });
+    expect(parseTerminalTableModel('')).toEqual({ columns: [], mode: 'tokens', rows: [] });
+    expect(parseTerminalTableModel('', { mode: 'fixed' })).toEqual({ columns: [], mode: 'fixed', rows: [] });
   });
 
   it('creates normalized keys', () => {
