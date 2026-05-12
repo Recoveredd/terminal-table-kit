@@ -4,7 +4,7 @@
   "description": "Parse fixed-width terminal table output into typed rows.",
   "type": "module",
   "sideEffects": false,
-  "license": "MIT",
+  "license": "MPL-2.0",
   "author": "Recoveredd",
   "repository": {
     "type": "git",

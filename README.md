@@ -257,4 +257,4 @@ type TerminalTableRow = Record<string, string>;
 
 ## License
 
-MIT
+MPL-2.0
