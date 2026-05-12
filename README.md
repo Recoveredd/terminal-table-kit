@@ -138,6 +138,19 @@ const markdown = arrayToMarkdownTable(rows);
 
 For browser previews or support dashboards, render parsed rows with `json-html-kit`.
 
+For CSV exports from parsed terminal rows, use `json-csv-kit`:
+
+```ts
+import { jsonToCsv } from 'json-csv-kit';
+import { parseTerminalTable } from 'terminal-table-kit';
+
+const rows = parseTerminalTable(output, {
+  keyStyle: 'camel'
+});
+
+const csv = jsonToCsv(rows);
+```
+
 ### Inspect detected columns
 
 ```ts
