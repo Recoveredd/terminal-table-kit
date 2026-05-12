@@ -215,6 +215,7 @@ interface ParseTerminalTableOptions {
   headers?: readonly string[] | ((header: string, index: number) => string);
   headerLine?: number;
   keyStyle?: 'preserve' | 'camel' | 'snake';
+  maxRows?: number;
   mode?: 'auto' | 'fixed' | 'tokens';
   preserveLastColumn?: boolean;
   separator?: RegExp;
@@ -230,6 +231,7 @@ interface ParseTerminalTableOptions {
 | `headers` | detected headers | Friendly alias for `columnKeys`. |
 | `headerLine` | `0` | Index of the header line after optional empty-line filtering. |
 | `keyStyle` | `preserve` | Keep headers as keys, or convert to `camel` / `snake`. |
+| `maxRows` | unlimited | Parse at most this many body rows. |
 | `mode` | `auto` | Let the parser choose, or force `fixed` / `tokens`. |
 | `preserveLastColumn` | `true` | Let the final column consume the rest of the row. |
 | `separator` | `/[ \t]{2,}/g` | Separator used to detect multi-word headers. Falls back to whitespace tokens. |

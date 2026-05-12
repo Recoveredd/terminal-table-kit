@@ -22,6 +22,7 @@ export interface ParseTerminalTableOptions {
   headers?: readonly string[] | ((header: string, index: number) => string);
   headerLine?: number;
   keyStyle?: ColumnKeyStyle;
+  maxRows?: number;
   mode?: ParseMode;
   preserveLastColumn?: boolean;
   separator?: RegExp;

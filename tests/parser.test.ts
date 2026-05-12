@@ -187,6 +187,18 @@ describe('terminal-table-kit', () => {
     ]);
   });
 
+  it('can limit parsed rows', () => {
+    const input = [
+      'NAME      STATUS',
+      'api       Running',
+      'worker    Pending'
+    ].join('\n');
+
+    expect(parseTerminalTable(input, { maxRows: 1 })).toEqual([
+      { NAME: 'api', STATUS: 'Running' }
+    ]);
+  });
+
   it('throws a clear error when the header line is outside the input', () => {
     expect(() => parseTerminalTable('NAME\napi', { headerLine: 4 })).toThrow(TableParseError);
   });

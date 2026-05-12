@@ -15,6 +15,7 @@ interface ResolvedOptions {
   columnKeys: readonly string[] | ((header: string, index: number) => string) | undefined;
   headerLine: number;
   keyStyle: ColumnKeyStyle;
+  maxRows: number;
   mode: ParseMode;
   preserveLastColumn: boolean;
   separator: RegExp;
@@ -56,6 +57,7 @@ export function parseTerminalTableModel(input: string, options: ParseTerminalTab
   const columns = detection.columns;
   const rows = lines
     .slice(settings.headerLine + 1)
+    .slice(0, settings.maxRows)
     .map((line) => parseRow(line, columns, detection.mode, settings))
     .filter((row) => Object.values(row).some((value) => value !== ''));
 
@@ -98,6 +100,7 @@ function resolveOptions(options: ParseTerminalTableOptions): ResolvedOptions {
     columnKeys: options.columnKeys ?? options.headers,
     headerLine: normalizeHeaderLine(options.headerLine),
     keyStyle: normalizeKeyStyle(options.keyStyle),
+    maxRows: normalizeMaxRows(options.maxRows),
     mode: normalizeMode(options.mode),
     preserveLastColumn: options.preserveLastColumn ?? true,
     separator: options.separator ?? DEFAULT_SEPARATOR,
@@ -113,6 +116,18 @@ function normalizeHeaderLine(value: number | undefined): number {
   }
 
   return Math.floor(value);
+}
+
+function normalizeMaxRows(value: number | undefined): number {
+  if (value === undefined || value === Number.POSITIVE_INFINITY) {
+    return Number.POSITIVE_INFINITY;
+  }
+
+  if (!Number.isFinite(value)) {
+    return Number.POSITIVE_INFINITY;
+  }
+
+  return Math.max(0, Math.floor(value));
 }
 
 function normalizeKeyStyle(value: unknown): ColumnKeyStyle {
