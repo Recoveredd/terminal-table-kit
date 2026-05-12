@@ -6,6 +6,8 @@ Parse terminal table output into JavaScript objects.
 
 `terminal-table-kit` is a small TypeScript utility for tools that need to turn command output into data: CLI wrappers, dashboards, diagnostics, scripts, docs generators and lightweight admin tooling.
 
+Demo: https://kits.wasta-wocket.fr/terminal-table-kit
+
 It is inspired by old table parsers such as `table-parser`, but rebuilt as a modern, typed, dependency-free package.
 
 ## Package quality
