@@ -1,12 +1,14 @@
 # terminal-table-kit
 
+[![npm version](https://img.shields.io/npm/v/terminal-table-kit.svg)](https://www.npmjs.com/package/terminal-table-kit)
+[![License: MPL-2.0](https://img.shields.io/badge/license-MPL--2.0-blue.svg)](LICENSE)
 [![CI](https://github.com/Recoveredd/terminal-table-kit/actions/workflows/ci.yml/badge.svg)](https://github.com/Recoveredd/terminal-table-kit/actions/workflows/ci.yml)
 
 Parse terminal table output into JavaScript objects.
 
 `terminal-table-kit` is a small TypeScript utility for tools that need to turn command output into data: CLI wrappers, dashboards, diagnostics, scripts, docs generators and lightweight admin tooling.
 
-Demo: [packages.wasta-wocket.fr/terminal-table-kit/](https://packages.wasta-wocket.fr/terminal-table-kit/)
+Links: [Demo](https://packages.wasta-wocket.fr/terminal-table-kit/) · [npm](https://www.npmjs.com/package/terminal-table-kit) · [GitHub](https://github.com/Recoveredd/terminal-table-kit)
 
 It is inspired by old table parsers such as `table-parser`, but rebuilt as a modern, typed, dependency-free package.
 
